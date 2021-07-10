@@ -1,17 +1,18 @@
 {
-  "dependencies": {
-  },
-  "name": "BUC",
-  "version": "1.0.0",
-  "main": "testing.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+    "dependencies": {
+        "hardhat": "^2.4.1"
+    },
+    "name": "BUC",
+    "version": "1.0.0",
+    "main": "testing.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": ""
 }

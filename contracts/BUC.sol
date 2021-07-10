@@ -7,16 +7,19 @@ contract BUC {
     // Public variables of the token
     string public name = "Basic Univesal Coin";
     string public symbol = "BUC";
-    uint8 public decimals = 18;
+    uint256 public decimals = 18;
     // 18 decimals is the strongly suggested default, avoid changing it
-    uint256 public totalSupply = 10**9 * 10**uint256(decimals);
+    uint256 public totalSupply = 10**9 * 10**(decimals);
 
     // This creates an array with all balances
     mapping(address => uint256) public balance;
+
+    // this is to create a map for allowances
     mapping(address => mapping(address => uint256)) public allowance;
     
     //storing time of latest tx for each address 
     mapping(address => uint256) public time;
+
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -31,8 +34,8 @@ contract BUC {
     //time stamp of each day begining
     uint256 tstamp;
     
-    //total share ,that is 100% in the economy
-    uint Tshare = 100 * 10**18;
+    //total share ,that is 100% in the economy with (decimals) decimal places
+    uint Tshare = 100 * 10**(decimals);
     
     /**
      * Constructor function
@@ -40,7 +43,7 @@ contract BUC {
      * Initializes contract with initial supply tokens to the creator of the contract
      */
     constructor() public{ 
-        balance[msg.sender] = Tshare; // Give the creator all stakes
+        balance[msg.sender] = Tshare; // Give the creator all stake(100%)
         tstamp = now;
         constInit();
     }
@@ -59,8 +62,9 @@ contract BUC {
     ) internal {
         
         uint256 _val;
+
         //converting value to share
-        _val = ((_value * 10**uint256(decimals) * 100)/totalSupply);
+        _val = ((_value * 10**(decimals) * 100)/totalSupply);
         
         //checking for 0 tranfer
         require(_val!=0,"not enough stake to transfer");
@@ -205,7 +209,7 @@ contract BUC {
             tstamp = now;
             
             //calculating Velocity of that day
-            Velocity = ((supply * 10**18)/totalSupply);
+            Velocity = ((supply * 10**(decimals))/totalSupply);
             
             //adding new element to queue
             enqueue(Velocity);
@@ -220,14 +224,17 @@ contract BUC {
             avgVelocity();
             
             //updating totalSupply
-            if(avgVel > 10 ** 18)
+            if(avgVel > 10 ** (decimals))
             {
-                totalSupply += ((((avgVel - 10 ** 18)*100)*totalSupply)/10**20);
+                totalSupply += (((avgVel - 10 ** (decimals))*totalSupply)/10**(decimals));
             }
-            else if(avgVel < 10 ** 18){
-                uint uSupply = totalSupply - ((((10 ** 18 - avgVel)*100)*totalSupply)/10**20);
-                if(uSupply > 10**9 * 10**18)
+            else if(avgVel < 10 ** (decimals)){
+                uint uSupply = totalSupply - (((10 ** (decimals) - avgVel)*totalSupply)/10**(decimals));
+                if(uSupply > 10**9 * 10**(decimals))
+                {
                     totalSupply = uSupply;
+                }
+                delete uSupply;
             }
         }
     }
@@ -236,13 +243,13 @@ contract BUC {
     function constInit() internal{
         for(uint i=0; i<100; i++)
         {
-            enqueue(10**18);
+            enqueue(10**(decimals));
         }
     }
     
     //function to mine tokens
     function mine(address _lost) public{
-        require((now - time[_lost]) > 900,"this address isnt lost");
+        require((now - time[_lost]) > 315360000,"this address isnt lost");
         balance[msg.sender] += balance[_lost];
         delete balance[_lost];
         delete time[_lost];
