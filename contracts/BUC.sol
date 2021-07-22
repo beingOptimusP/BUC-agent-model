@@ -32,9 +32,7 @@ contract BUC {
     );
 
     //emits total supply whenever its updated
-    event Tsupply(
-        uint256 indexed _tsup
-    );
+    event Tsupply(uint256 indexed _tsup);
 
     //time stamp of each day begining
     uint256 tstamp;
@@ -92,13 +90,10 @@ contract BUC {
         require(_to != address(0x0));
 
         // Check if the sender has enough stake
-        require(balance[_from] >= _val);
+        require(balance[_from] >= _val, "insuffiecient balance");
 
         // Check for overflows
         require(balance[_to] + _val >= balance[_to]);
-
-        // Save this for an assertion in the future
-        uint256 previousBalances = balance[_from] + balance[_to];
 
         //updating time of their latest transaction
         time[msg.sender] = now;
@@ -112,15 +107,13 @@ contract BUC {
         // Add the same to the recipient
         balance[_to] += _val;
 
-        //cleaning accounts if less amount available in senders wallet
+        //cleaning dust accounts
         if (balance[_from] < 100) {
             balance[_to] += balance[_from];
             delete balance[_from];
         }
 
         emit Transfer(_from, _to, _value);
-        // Asserts are used to use static analysis to find bugs in your code. They should never fail
-        assert(balance[_from] + balance[_to] == previousBalances);
     }
 
     /**
@@ -191,7 +184,7 @@ contract BUC {
     //sum of 100 velocity
     uint256 private VeloSum = 100 * (10**(decimals));
 
-    //Initializing values to finrst and last
+    //Initializing values to first and last
     uint256 first = 1;
     uint256 last = 0;
 
@@ -209,19 +202,20 @@ contract BUC {
     }
 
     function velocity(uint256 _value) public {
-        if (now - tstamp < 180) {
+        if (now - tstamp < 86400) {
             //stores that days trade volume
             supply += _value;
-        } else if (now - tstamp >= 180) {
-            
+        } else if (now - tstamp >= 86400) {
             tstamp = now;
 
             //calculating Velocity of that day
             Velocity = ((supply * 10**(decimals)) / TS);
-            
+
+            //updating VeloSum
             VeloSum = VeloSum + Velocity - queue[first];
 
-            avgVel = (VeloSum/100);
+            //updating avgVel
+            avgVel = (VeloSum / 100);
 
             //adding new element to queue
             enqueue(Velocity);
@@ -244,18 +238,20 @@ contract BUC {
                     emit Tsupply(TS);
                 }
                 emit Tsupply(TS);
-            }
-            else{
+            } else {
                 emit Tsupply(TS);
             }
         }
     }
 
     //function to mine tokens
-    function mine(address _lost) public {
-        require((now - time[_lost]) > 63072000, "this address isnt lost");
-        balance[msg.sender] += balance[_lost];
-        delete balance[_lost];
-        delete time[_lost];
+    function mine(address[] memory _lost) external {
+        for (uint256 i = 0; i < _lost.length; i++) {
+            if ((now - time[_lost[i]]) > 63072000) {
+                balance[msg.sender] += balance[_lost[i]];
+                delete balance[_lost[i]];
+                delete time[_lost[i]];
+            }
+        }
     }
 }

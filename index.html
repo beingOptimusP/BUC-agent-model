@@ -1,22 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
-    <SCRipt src="./abi.js"></SCRipt>
+    <script src="./abi.js"></script>
 </head>
+
 <body>
     <center>
-        <h3>hello world, welcome to BUC</h3>
+        <h2>hello world, welcome to BUC</h2>
+        <br><br>
+        <h3>NAME => <span id="name"></span></h3>
+        <h3>Total supply => <span id="ts"></span></h3>
+        <h3>Your address => <span id="ad"></span></h3>
+        <h3>Velocity => <span id="infla"></span></h3>
+        <h3>My wallet balance => <span id="myBal"></span></h3>
+        <h3>Your share => <span id="share"></span></h3>
+        <h3>
+            Send MAP tokens =>
+            <center>
+                address:<input type="text" id="add" /> <br /> value:
+                <input type="number" id="value" /> <br /> <br><button onclick="send()">
+            send
+          </button>
+            </center>
+        </h3>
     </center>
-</body>
 
     <script>
-        
+        Number.prototype.noExponents = function() {
+            var data = String(this).split(/[eE]/);
+            if (data.length == 1) return data[0];
 
-        init()
+            var z = "",
+                sign = this < 0 ? "-" : "",
+                str = data[0].replace(".", ""),
+                mag = Number(data[1]) + 1;
+
+            if (mag < 0) {
+                z = sign + "0.";
+                while (mag++) z += "0";
+                return z + str.replace(/^\-/, "");
+            }
+            mag -= str.length;
+            while (mag--) z += "0";
+            return str + z;
+        };
+
+        var myContract;
+        var accounts;
+        async function CheckMetamaskConnection() {
+            // Modern dapp browsers...
+            if (window.ethereum) {
+                window.web3 = new Web3(window.ethereum);
+                try {
+                    // Request account access if needed
+                    await ethereum.enable();
+
+                    accounts = await web3.eth.getAccounts();
+                    console.log("yes");
+                    init();
+                    nft();
+                    // Acccounts now exposed
+                    return true;
+                } catch (error) {
+                    // User denied account access...
+                    return false;
+                }
+            }
+            // Legacy dapp browsers...
+            else if (window.web3) {
+                window.web3 = new Web3(web3.currentProvider);
+                // Acccounts always exposed
+                accounts = await web3.eth.getAccounts();
+                console.log("yes");
+                init();
+                return true;
+            }
+            // Non-dapp browsers...
+            else {
+                console.log(
+                    "Non-Ethereum browser detected. You should consider trying MetaMask!"
+                );
+                return false;
+            }
+        }
+
+        CheckMetamaskConnection();
+
+        myContract = new web3.eth.Contract(
+            scAbi,
+            "0x7B506d9664C9aB2760DBF21FF216e478Ef5c5feC"
+        );
+
+        const init = async() => {
+            console.log(accounts);
+            var Ts = parseFloat(
+                (await myContract.methods.totalSupply().call()) / Math.pow(10, 18)
+            );
+            var velocity = parseFloat(
+                (await myContract.methods.avgVel().call()) / Math.pow(10, 18)
+            );
+            document.getElementById("ts").innerHTML = Ts.noExponents();
+            document.getElementById("name").innerHTML = await myContract.methods
+                .name()
+                .call();
+            document.getElementById(
+                "infla"
+            ).innerHTML = `${velocity.noExponents()}`;
+            document.getElementById("myBal").innerHTML = (
+                (await myContract.methods.balanceOf(accounts[0]).call()) /
+                Math.pow(10, 18)
+            ).noExponents();
+            document.getElementById("ad").innerHTML = accounts[0];
+            document.getElementById("share").innerHTML = `${(
+                (await myContract.methods.balance(accounts[0]).call()) /
+                Math.pow(10, 18)
+            ).noExponents()}%`;
+        };
+
+        const send = async() => {
+            const value = (
+                document.getElementById("value").value * Math.pow(10, 9)
+            ).toString();
+            const add = document.getElementById("add").value;
+            await myContract.methods
+                .transfer(add, value)
+                .send({
+                    from: accounts[0]
+                });
+            window.location.reload(true);
+        };
     </script>
+</body>
+
 </html>
