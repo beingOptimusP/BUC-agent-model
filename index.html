@@ -12,9 +12,15 @@
     <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="./abi.js"></script>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            background-color: #111518;
+        }
+    </style>
 </head>
 
-<body>
+<body bgcolor="#111518">
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand">
@@ -28,7 +34,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="card">
-                    <div style="background-color: #333;color: yellowgreen;border-radius: 10px;" class="card-body">
+                    <div style="background-color: #333;color: yellowgreen;border-radius: 10px;border-color: #333;" class="card-body">
                         <h5 class="card-title">Total Supply:</h5>
                         <p style="text-align: center;font-size: 30px;" class="card-text" id="TS"></p>
                     </div>
@@ -38,7 +44,7 @@
                 <div class="card">
                     <div style="background-color: #333;color: yellowgreen;border-radius: 10px;" class="card-body">
                         <h5 class="card-title">Average Velocity:</h5>
-                        <p style="text-align: center;font-size: 30px;" class="card-text" id="vel">1</p>
+                        <p style="text-align: center;font-size: 30px;" class="card-text" id="vel"></p>
                     </div>
                 </div>
             </div>
@@ -52,7 +58,7 @@
             <div class="col-sm-6">
                 <div class="card">
                     <div style="background-color: #333;color: yellowgreen;border-radius: 10px;" class="card-body">
-                        <h5 class="card-title">Your BUC Holdings</h5>
+                        <h5 class="card-title">Your BUC Holdings:</h5>
                         <p style="text-align: center;font-size: 30px;" class="card-text" id="myBal"></p>
                     </div>
                 </div>
@@ -60,7 +66,7 @@
             <div class="col-sm-6">
                 <div class="card">
                     <div style="background-color: #333;color: yellowgreen;border-radius: 10px;" class="card-body">
-                        <h5 class="card-title">Your BUC Share</h5>
+                        <h5 class="card-title">Your BUC Share:</h5>
                         <p style="text-align: center;font-size: 30px;" class="card-text" id="share"></p>
                     </div>
                 </div>
@@ -87,11 +93,11 @@
                     dataPoints: [{
                         y: 1000000000
                     }, {
-                        y: 1400020000
+                        y: 1000020000
                     }, {
                         y: 1000300000
                     }, {
-                        y: 1040024000
+                        y: 1000024000
                     }]
                 }]
             });
