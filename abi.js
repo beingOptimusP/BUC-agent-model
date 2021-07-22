@@ -143,17 +143,6 @@ scAbi = [{
     },
     {
         "inputs": [{
-            "internalType": "uint256",
-            "name": "_value",
-            "type": "uint256"
-        }],
-        "name": "velocity",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{
                 "internalType": "address",
                 "name": "_owner",
                 "type": "address"
@@ -187,7 +176,7 @@ scAbi = [{
     {
         "inputs": [{
             "internalType": "address",
-            "name": "account",
+            "name": "_account",
             "type": "address"
         }],
         "name": "balanceOf",
@@ -279,5 +268,20 @@ scAbi = [{
         }],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "inputs": [{
+            "internalType": "address",
+            "name": "_account",
+            "type": "address"
+        }],
+        "name": "yourShare",
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
+        "stateMutability": "view",
+        "type": "function"
     }
-];
+]
